@@ -1,0 +1,3 @@
+New Release 1.2:
+1. Aggiunta funzione link-startup per re-indirizzare sulla pagina interna retailhub, una volta cliccato il nome apparso.
+2. Creazione di un vector-database per risposte deterministiche e non randomiche in funzione della stessa domanda.
