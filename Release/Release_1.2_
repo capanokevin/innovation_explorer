@@ -1,3 +1,4 @@
-New Release 1.2:
+New Release 1.2 (23 agosto):
 1. Aggiunta funzione link-startup per re-indirizzare sulla pagina interna retailhub, una volta cliccato il nome apparso.
 2. Creazione di un vector-database per risposte deterministiche e non randomiche in funzione della stessa domanda.
+3. Agente informato sul processo di valutazione, assitenza dell'utente.
