@@ -11,24 +11,35 @@ DB_PASSWORD = '56LXhzMhTa9a'
 
 # Funzione per connettersi al database
 def get_db_connection():
-    conn = psycopg2.connect(
-        host=DB_HOST,
-        port=DB_PORT,
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD
-    )
-    return conn
+    try:
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD
+        )
+        return conn
+    except psycopg2.DatabaseError as e:
+        st.error(f"Database connection failed: {e}")
+        return None
 
 # Funzione per eseguire query al database
-def search_startups(query):
+def search_startups(query, params):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(query)
-    records = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return records
+    if conn is None:
+        return []
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        records = cursor.fetchall()
+        cursor.close()
+        return records
+    except psycopg2.Error as e:
+        st.error(f"Query failed: {e}")
+        return []
+    finally:
+        conn.close()
 
 # Interfaccia utente Streamlit
 def main():
@@ -45,54 +56,26 @@ def main():
 
     if st.button("Search"):
         if search_term:
-            query = f"""
-            SELECT * FROM companies
-            WHERE companies."Name" ILIKE '%{search_term}%'
+            query = """
+                SELECT * FROM companies
+                WHERE companies."Name" ILIKE %s
             """
-            results = search_startups(query)
+            results = search_startups(query, ('%' + search_term + '%',))
             
             if results:
                 st.success(f"Found {len(results)} startups matching your search!")
-                df = pd.DataFrame(results, columns= ["Name","Business_model","Business_description","Founding_year",
-    "Founders",
-    "Product_description",
-    "City",
-    "Country",
-    "Facebook_url",
-    "Notable_achievements_awards",
-    "Target_markets",
-    "Company_type",
-    "Clients",
-    "Tags",
-    "Phone_number",
-    "Technologies_used",
-    "Address",
-    "Region",
-    "Number_of_employees",
-    "Main_investors",
-    "Number_of_investors",
-    "Investment_funds",
-    "Exit_summary",
-    "Total_funding",
-    "Advisors",
-    "LinkedIn_URL",
-    "IPO_summary",
-    "Value_of_the_startup",
-    "Number_of_patents",
-    "Number_of_trademarks",
-    "Operating_status",
-    "Type_of_latest_investment",
-    "Acquired_by",
-    "Video_demo",
-    "Website",
-    "Revenue",
-    "Growth_rate",
-    "Logo_url",
-    "Key",
-    "google_news_urls",
-    "timestamp"
-]
-)
+                df = pd.DataFrame(results, columns=[
+                    "Name", "Business_model", "Business_description", "Founding_year",
+                    "Founders", "Product_description", "City", "Country", "Facebook_url",
+                    "Notable_achievements_awards", "Target_markets", "Company_type",
+                    "Clients", "Tags", "Phone_number", "Technologies_used", "Address",
+                    "Region", "Number_of_employees", "Main_investors", "Number_of_investors",
+                    "Investment_funds", "Exit_summary", "Total_funding", "Advisors", 
+                    "LinkedIn_URL", "IPO_summary", "Value_of_the_startup", "Number_of_patents", 
+                    "Number_of_trademarks", "Operating_status", "Type_of_latest_investment", 
+                    "Acquired_by", "Video_demo", "Website", "Revenue", "Growth_rate", 
+                    "Logo_url", "Key", "google_news_urls", "timestamp"
+                ])
                 st.dataframe(df)
             else:
                 st.warning("No startups found matching your search term.")
