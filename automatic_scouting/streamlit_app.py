@@ -2,13 +2,6 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 
-# Parametri di connessione al database
-DB_HOST = '35.231.104.140'
-DB_PORT = '5432'
-DB_NAME = 'rh_ai_storage'
-DB_USER = 'kevin_capano'
-DB_PASSWORD = '56LXhzMhTa9a'
-
 # Funzione per connettersi al database
 def get_db_connection():
     try:
