@@ -2,6 +2,12 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 
+DB_HOST = st.secrets["DB_HOST"]
+DB_PORT = st.secrets["DB_PORT"]
+DB_NAME = st.secrets["DB_NAME"]
+DB_USER = st.secrets["DB_USER"]
+DB_PASSWORD = st.secrets["DB_PASSWORD"]
+
 # Funzione per connettersi al database
 def get_db_connection():
     try:
