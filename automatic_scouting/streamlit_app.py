@@ -24,13 +24,16 @@ def get_db_connection():
         return None
 
 # Funzione per eseguire query al database
-def search_startups(query, params):
+def execute_query(query, params=None):
     conn = get_db_connection()
     if conn is None:
         return []
     try:
         cursor = conn.cursor()
-        cursor.execute(query, params)
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
         records = cursor.fetchall()
         cursor.close()
         return records
@@ -40,46 +43,53 @@ def search_startups(query, params):
     finally:
         conn.close()
 
+# Funzione per ottenere la lista dei nomi delle startup
+def get_startup_names():
+    query = "SELECT DISTINCT companies.\"Name\" FROM companies ORDER BY companies.\"Name\" ASC"
+    results = execute_query(query)
+    return [row[0] for row in results]
+
+# Funzione per ottenere i dettagli di una startup
+def get_startup_details(name):
+    query = """
+        SELECT * FROM companies WHERE companies."Name" = %s
+    """
+    result = execute_query(query, (name,))
+    return result[0] if result else None
+
 # Interfaccia utente Streamlit
 def main():
     st.set_page_config(page_title="Startup Search", page_icon=":rocket:", layout="wide")
 
     st.title("Search for Startups in the Database :mag_right:")
 
-    st.markdown("""
-        Use the search box below to find startups in our database.
-        You can search by **name**, **industry**, or any other field available.
-    """)
+    # Ottieni la lista dei nomi delle startup
+    startup_names = get_startup_names()
 
-    search_term = st.text_input("Enter search term", placeholder="e.g., AI, Fintech, Robotics")
+    # Menu a tendina per selezionare una startup
+    selected_name = st.selectbox("Select a Startup", options=startup_names)
 
-    if st.button("Search"):
-        if search_term:
-            query = """
-                SELECT * FROM companies
-                WHERE companies."Name" ILIKE %s
-            """
-            results = search_startups(query, ('%' + search_term + '%',))
-            
-            if results:
-                st.success(f"Found {len(results)} startups matching your search!")
-                df = pd.DataFrame(results, columns=[
-                    "Name", "Business_model", "Business_description", "Founding_year",
-                    "Founders", "Product_description", "City", "Country", "Facebook_url",
-                    "Notable_achievements_awards", "Target_markets", "Company_type",
-                    "Clients", "Tags", "Phone_number", "Technologies_used", "Address",
-                    "Region", "Number_of_employees", "Main_investors", "Number_of_investors",
-                    "Investment_funds", "Exit_summary", "Total_funding", "Advisors", 
-                    "LinkedIn_URL", "IPO_summary", "Value_of_the_startup", "Number_of_patents", 
-                    "Number_of_trademarks", "Operating_status", "Type_of_latest_investment", 
-                    "Acquired_by", "Video_demo", "Website", "Revenue", "Growth_rate", 
-                    "Logo_url", "Key", "google_news_urls", "timestamp"
-                ])
-                st.dataframe(df)
-            else:
-                st.warning("No startups found matching your search term.")
-        else:
-            st.error("Please enter a search term to begin.")
+    if selected_name:
+        # Ottieni i dettagli della startup selezionata
+        details = get_startup_details(selected_name)
+
+        if details:
+            # Mostra i dettagli in modo chiaro e ordinato
+            st.markdown("### Startup Details")
+            labels = [
+                "Name", "Business Model", "Business Description", "Founding Year",
+                "Founders", "Product Description", "City", "Country", "Facebook URL",
+                "Notable Achievements/Awards", "Target Markets", "Company Type",
+                "Clients", "Tags", "Phone Number", "Technologies Used", "Address",
+                "Region", "Number of Employees", "Main Investors", "Number of Investors",
+                "Investment Funds", "Exit Summary", "Total Funding", "Advisors", 
+                "LinkedIn URL", "IPO Summary", "Value of the Startup", "Number of Patents", 
+                "Number of Trademarks", "Operating Status", "Type of Latest Investment", 
+                "Acquired By", "Video Demo", "Website", "Revenue", "Growth Rate", 
+                "Logo URL", "Key", "Google News URLs", "Timestamp"
+            ]
+            for label, value in zip(labels, details):
+                st.write(f"**{label}:** {value if value else 'N/A'}")
 
 # Esegui l'applicazione Streamlit
 if __name__ == "__main__":
