@@ -12,9 +12,7 @@ VALID_USERS = {
 # Funzione per verificare le credenziali
 def check_credentials(username, password):
     """Verifica se il nome utente e la password sono corretti."""
-    if username in VALID_USERS and VALID_USERS[username] == password:
-        return True
-    return False
+    return VALID_USERS.get(username) == password
 
 # Funzione di login
 def login():
@@ -28,7 +26,7 @@ def login():
     if st.button("Login"):
         if check_credentials(username, password):
             st.session_state["logged_in"] = True
-            st.success("Login successful!")
+            st.experimental_rerun()
         else:
             st.error("Invalid username or password.")
 
@@ -129,5 +127,6 @@ if st.session_state["logged_in"]:
     main()
     if st.button("Logout"):
         st.session_state["logged_in"] = False
+        st.experimental_rerun()
 else:
     login()
