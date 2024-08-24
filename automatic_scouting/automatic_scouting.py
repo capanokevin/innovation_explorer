@@ -43,9 +43,9 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 
 
 # Your Airtable API key and base ID
-api_key_airtable = 'patRHlt60PBL6jlV5.f2b9afed49bf23d9ab73cee6b283af76d3b4a9ebc0619002c6f104cc84382f2c'
-base_id = 'appUMz37tbS84AKX4'
-table_name = 'integrated_table'
+api_key_airtable = ''
+base_id = ''
+table_name = ''
 
 # Airtable API endpoint for the specified table
 url_airtable = f'https://api.airtable.com/v0/{base_id}/{table_name}'
@@ -79,13 +79,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 11; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Mobile Safari/537.36",
 ]
 
-
-# Define your connection parameters
-DB_HOST = '35.231.104.140'
-DB_PORT = '5432'  # Default PostgreSQL port
-DB_NAME = 'rh_ai_storage'
-DB_USER = 'kevin_capano'
-DB_PASSWORD = '56LXhzMhTa9a'
 
 
 # some functions to help  
