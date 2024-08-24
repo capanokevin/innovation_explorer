@@ -36,10 +36,13 @@ import tiktoken
 
 # Initialize WebDriver
 chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+chrome_options.binary_location = '/usr/bin/google-chrome'
 chrome_options.add_argument('--headless')  # Run headless Chrome
-service = Service(r'C:\Users\kevin\Desktop\RetailHub\new_software\chromedriver\chromedriver-win64\chromedriver.exe')  # Update the path to your chromedriver
+service = Service('/usr/bin/chromedriver')  # Update the path to your chromedriver
 driver = webdriver.Chrome(service=service, options=chrome_options)
+
+
+
 
 
 # Your Airtable API key and base ID
@@ -81,21 +84,24 @@ USER_AGENTS = [
 
 
 
-# some functions to help  
 def reset_driver():
-    # Reinizializza il WebDriver
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+    # Configura le opzioni di Chrome
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Ensure GUI is off
+    chrome_options.add_argument("--headless")  # Esegui in modalità headless
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 
-    service = Service(r'C:\Users\kevin\Desktop\RetailHub\new_software\chromedriver\chromedriver-win64\chromedriver.exe')  # Aggiorna il percorso al tuo chromedriver
-    
-    # Restituisci il nuovo driver
+    # Imposta i percorsi per Chrome e ChromeDriver
+    if os.name == 'nt':  # Per Windows
+        chrome_options.binary_location = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+        service = Service(r'C:\path\to\chromedriver.exe')  # Aggiorna il percorso corretto
+    else:  # Per Linux (ad esempio, su Google Cloud VM)
+        chrome_options.binary_location = '/usr/bin/google-chrome'
+        service = Service('/usr/bin/chromedriver')
+
+    # Inizializza e restituisci il WebDriver
     return webdriver.Chrome(service=service, options=chrome_options)
 
 
