@@ -2,13 +2,44 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 
+# Definisci le credenziali valide
+VALID_USERS = {
+    "user1": "password1",
+    "user2": "password2",
+    "admin": "adminpass"
+}
+
+# Funzione per verificare le credenziali
+def check_credentials(username, password):
+    """Verifica se il nome utente e la password sono corretti."""
+    if username in VALID_USERS and VALID_USERS[username] == password:
+        return True
+    return False
+
+# Funzione di login
+def login():
+    """Interfaccia di login."""
+    st.title("Login")
+
+    # Input per nome utente e password
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        if check_credentials(username, password):
+            st.session_state["logged_in"] = True
+            st.success("Login successful!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid username or password.")
+
+# Funzione per connettersi al database
 DB_HOST = st.secrets["DB_HOST"]
 DB_PORT = st.secrets["DB_PORT"]
 DB_NAME = st.secrets["DB_NAME"]
 DB_USER = st.secrets["DB_USER"]
 DB_PASSWORD = st.secrets["DB_PASSWORD"]
 
-# Funzione per connettersi al database
 def get_db_connection():
     try:
         conn = psycopg2.connect(
@@ -91,6 +122,14 @@ def main():
             for label, value in zip(labels, details):
                 st.write(f"**{label}:** {value if value else 'N/A'}")
 
-# Esegui l'applicazione Streamlit
-if __name__ == "__main__":
+# Logica principale
+if "logged_in" not in st.session_state:
+    st.session_state["logged_in"] = False
+
+if st.session_state["logged_in"]:
     main()
+    if st.button("Logout"):
+        st.session_state["logged_in"] = False
+        st.experimental_rerun()
+else:
+    login()
