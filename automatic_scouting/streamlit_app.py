@@ -29,7 +29,6 @@ def login():
         if check_credentials(username, password):
             st.session_state["logged_in"] = True
             st.success("Login successful!")
-            st.experimental_rerun()
         else:
             st.error("Invalid username or password.")
 
@@ -130,6 +129,5 @@ if st.session_state["logged_in"]:
     main()
     if st.button("Logout"):
         st.session_state["logged_in"] = False
-        st.experimental_rerun()
 else:
     login()
