@@ -111,6 +111,11 @@ def format_product_description(description):
 
 
 
+# Funzione per colorare il testo in verde
+def style_label(label):
+    """Applica uno stile al nome della colonna."""
+    return f'<span style="color:#00FF00">{label}</span>'  # Verde tipo Matrix
+
 # Interfaccia utente Streamlit
 def main():
     st.set_page_config(page_title="Startup Search", page_icon=":rocket:", layout="wide")
@@ -147,7 +152,8 @@ def main():
                     value = format_product_description(value)
                 elif label == "Google News URLs":
                     value = normalize_text(value)
-                st.write(f"**{label}:** {value if value else 'N/A'}")
+                styled_label = style_label(label)
+                st.markdown(f"**{styled_label}:** {value if value else 'N/A'}", unsafe_allow_html=True)
 
 # Logica principale
 if "logged_in" not in st.session_state:
@@ -159,3 +165,4 @@ if st.session_state["logged_in"]:
         st.session_state["logged_in"] = False
 else:
     login()
+
