@@ -4,7 +4,7 @@ import pandas as pd
 
 # Definisci le credenziali valide
 VALID_USERS = {
-    "user1": "password1",
+    "user1": "simplepass",  # Password modificata
     "user2": "password2",
     "admin": "adminpass"
 }
@@ -87,6 +87,14 @@ def get_startup_details(name):
     result = execute_query(query, (name,))
     return result[0] if result else None
 
+# Funzione per formattare la descrizione del prodotto
+def format_product_description(description):
+    """Formatta la descrizione del prodotto andando a capo per ogni '-'."""
+    if description:
+        formatted_description = description.replace("-", "\n-")
+        return formatted_description
+    return "N/A"
+
 # Interfaccia utente Streamlit
 def main():
     st.set_page_config(page_title="Startup Search", page_icon=":rocket:", layout="wide")
@@ -119,6 +127,8 @@ def main():
                 "Logo URL", "Key", "Google News URLs", "Timestamp"
             ]
             for label, value in zip(labels, details):
+                if label == "Product Description":
+                    value = format_product_description(value)
                 st.write(f"**{label}:** {value if value else 'N/A'}")
 
 # Logica principale
