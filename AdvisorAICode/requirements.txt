@@ -1,5 +1,5 @@
-cython<3.0.0
 pyyaml==5.4.1
+cython<3.0.0
 setuptools==68.0.0
 wheel==0.41.2
 streamlit==1.26.0
