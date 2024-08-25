@@ -1,60 +1,15 @@
-# Streamlit dependencies
+Cython==0.29.36
 streamlit==1.26.0
-
-# OpenAI dependencies
 openai==0.28.0
-
-# Database and connection pooling
 psycopg2-binary==2.9.9
-
-# Image processing and related dependencies
-Pillow==9.1.0  # Usa una versione precompilata che non richiede zlib
-
-# For handling JSON and YAML files
+Pillow==9.1.0
 pyyaml==6.0
-jsonschema==4.23.0
-
-# Additional dependencies for handling environment variables
-python-dotenv==1.0.0
-
-# For data manipulation and analysis
 pandas==2.2.2
 numpy==1.26.4
-
-# To handle HTTP requests
 requests==2.32.3
-
-# For asynchronous HTTP requests
 aiohttp==3.10.5
-
-# For managing Python project packaging
-setuptools==68.0.0
-
-# For logging and debugging
-loguru==0.7.0
-
-# For managing dates and times
 python-dateutil==2.9.0.post0
 pytz==2024.1
 tzdata==2024.1
 tzlocal==4.3.1
-
-# Additional dependencies for advanced Python features
 typing-extensions==4.12.2
-
-# To handle HTML/XML parsing and web scraping
-beautifulsoup4==4.12.2
-lxml==4.9.3
-
-# For creating and managing plots and visualizations
-matplotlib==3.7.2
-plotly==5.15.0
-
-# For websocket communication
-websockets==11.0.3
-
-# For deployment and compatibility with various platforms
-wheel==0.41.2
-
-# Miscellaneous utilities
-tqdm==4.66.5
