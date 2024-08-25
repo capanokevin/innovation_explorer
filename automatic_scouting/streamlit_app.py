@@ -1,6 +1,15 @@
 import streamlit as st
 import psycopg2
 import pandas as pd
+import unicodedata
+
+def normalize_text(text):
+    """Normalizza il testo rimuovendo caratteri non standard e standardizzando il font."""
+    if text:
+        normalized_text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
+        return normalized_text
+    return "N/A"
+
 
 # Definisci le credenziali valide
 VALID_USERS = {
@@ -136,6 +145,8 @@ def main():
             for label, value in zip(labels, details):
                 if label == "Product Description":
                     value = format_product_description(value)
+                elif label == "Google News URLs":
+                    value = normalize_text(value)
                 st.write(f"**{label}:** {value if value else 'N/A'}")
 
 # Logica principale
