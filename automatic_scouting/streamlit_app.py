@@ -91,15 +91,14 @@ def get_startup_details(name):
 def format_product_description(description):
     """Formatta la descrizione del prodotto andando a capo per ogni '-' tranne il primo."""
     if description:
-        lines = description.split("\n")
-        formatted_description = ""
-        for i, line in enumerate(lines):
-            if i == 0:
-                formatted_description += line  # La prima riga rimane com'è
-            else:
-                formatted_description += "\n" + line.replace("-", "\n-")  # Le altre righe sono formattate come elenco puntato
+        parts = description.split("-", 1)  # Divide solo al primo trattino
+        if len(parts) > 1:
+            formatted_description = parts[0] + "\n-" + parts[1].replace("-", "\n-")
+        else:
+            formatted_description = description  # Nessun trattino trovato
         return formatted_description
     return "N/A"
+
 
 
 
