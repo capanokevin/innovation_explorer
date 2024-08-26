@@ -121,20 +121,19 @@ def calculate_completeness(details, labels):
     missing_values = {"null", "n/a", "none", "", "nan", "missing", "na", "unknown", "undefined", "-", "--", "---", ".", "..", "...", None}
     
     def is_missing(value):
-        # Convertire in stringa, rimuovere spazi bianchi e convertire in minuscolo
+        # Convertire in stringa e rimuovere spazi bianchi
         value_str = str(value).strip().lower()
         
-        # Verificare se il valore è tra quelli mancanti
-        if value_str in missing_values:
+        # Verificare se il valore è tra quelli mancanti o contiene "null" nel testo
+        if value_str in missing_values or "null" in value_str:
             return True
         
-        # Verifica se il valore contiene solo spazi, tabulazioni o newline
-        if value_str in {"", "\t", "\n"}:
-            return True
-        
-        # Verifica se il valore contiene solo caratteri non alfanumerici (es. "---")
-        if all(char in "-._" for char in value_str):
-            return True
+        # Verifica se il valore è un numero non valido (es. NaN)
+        try:
+            if float(value_str) != float(value_str):
+                return True
+        except ValueError:
+            pass
         
         return False
     
