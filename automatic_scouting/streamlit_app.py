@@ -116,7 +116,13 @@ def style_label(label):
 # Funzione per calcolare la completezza dei dati
 def calculate_completeness(details, labels):
     total_fields = len(labels)
-    completed_fields = sum(1 for value in details if value and str(value).strip().lower() not in ["null", "n/a", "none", "", "nan"])
+    
+    # Lista di valori che consideriamo mancanti
+    missing_values = ["null", "n/a", "none", "", "nan", None]
+    
+    # Calcolo dei campi completati
+    completed_fields = sum(1 for value in details if str(value).strip().lower() not in missing_values)
+    
     completeness_percentage = (completed_fields / total_fields) * 100
     return completeness_percentage, total_fields - completed_fields
 
