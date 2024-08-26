@@ -2,7 +2,7 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 import unicodedata
-import plotly.express as px  # Import Plotly per i grafici
+import plotly.express as px
 
 def normalize_text(text):
     """Normalizza il testo rimuovendo caratteri non standard e standardizzando il font."""
@@ -113,12 +113,28 @@ def style_label(label):
     """Applica uno stile al nome della colonna."""
     return f'<span style="color:#00FF00">{label}</span>'  # Verde tipo Matrix
 
-# Funzione per calcolare la percentuale di completezza per ogni campo
-def calculate_completeness(df):
-    completeness = df.apply(lambda x: x.notnull() & (x != 'NULL')).mean() * 100
-    completeness_df = completeness.reset_index()
-    completeness_df.columns = ['Field', 'Completeness (%)']
-    return completeness_df
+# Funzione per calcolare la completezza dei dati
+def calculate_completeness(details, labels):
+    total_fields = len(labels)
+    completed_fields = sum(1 for value in details if value and value != "NULL")
+    completeness_percentage = (completed_fields / total_fields) * 100
+    return completeness_percentage, total_fields - completed_fields
+
+# Funzione per creare un grafico a barre della completezza
+def plot_completeness(details, labels):
+    completeness = []
+    for label, value in zip(labels, details):
+        if value and value != "NULL":
+            completeness.append(1)
+        else:
+            completeness.append(0)
+    completeness_df = pd.DataFrame({
+        "Field": labels,
+        "Completeness": completeness
+    })
+    completeness_df["Completeness"] = completeness_df["Completeness"] * 100
+    fig = px.bar(completeness_df, x="Field", y="Completeness", title="Completeness of Startup Data")
+    st.plotly_chart(fig)
 
 # Interfaccia utente Streamlit
 def main():
@@ -159,17 +175,8 @@ def main():
                 styled_label = style_label(label)
                 st.markdown(f"**{styled_label}:** {value if value else 'N/A'}", unsafe_allow_html=True)
 
-            # Crea un DataFrame per calcolare la completezza
-            df = pd.DataFrame([details], columns=labels)
-            completeness_df = calculate_completeness(df)
-
-            # Visualizza il grafico di completezza
-            st.markdown("### Data Completeness")
-            fig = px.bar(completeness_df, x='Field', y='Completeness (%)', 
-                         title="Completeness of Fields", 
-                         labels={'Completeness (%)': 'Completeness (%)'},
-                         height=400)
-            st.plotly_chart(fig)
+            # Calcola la completezza e visualizza il grafico
+            plot_completeness(details, labels)
 
 # Logica principale
 if "logged_in" not in st.session_state:
