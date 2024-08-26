@@ -3,6 +3,14 @@ import psycopg2
 import pandas as pd
 import unicodedata
 import plotly.express as px
+import os
+
+def log_user_access(username):
+    """Registra l'accesso dell'utente in un file di log."""
+    log_file_path = "user_access_log.txt"  # Specifica il percorso del file di log
+    with open(log_file_path, "a") as log_file:
+        log_file.write(f"User: {username}, Logged in at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+
 
 def normalize_text(text):
     """Normalizza il testo rimuovendo caratteri non standard e standardizzando il font."""
@@ -25,7 +33,6 @@ def check_credentials(username, password):
         return True
     return False
 
-# Funzione di login
 def login():
     """Interfaccia di login."""
     st.title("Login")
@@ -38,6 +45,7 @@ def login():
         if check_credentials(username, password):
             st.session_state["logged_in"] = True
             st.success("Login successful!")
+            log_user_access(username)  # Registra l'accesso dell'utente
         else:
             st.error("Invalid username or password.")
 
