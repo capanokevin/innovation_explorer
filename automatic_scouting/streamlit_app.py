@@ -13,7 +13,7 @@ def normalize_text(text):
 
 # Definisci le credenziali valide
 VALID_USERS = {
-    "user1": "simplepass",  # Password modificata
+    "anna": "simplepass1234",  # Password modificata
     "user2": "password2",
     "admin": "adminpass"
 }
