@@ -118,10 +118,28 @@ def calculate_completeness(details, labels):
     total_fields = len(labels)
     
     # Lista di valori che consideriamo mancanti
-    missing_values = ["null", "n/a", "none", "", "nan", None]
+    missing_values = {"null", "n/a", "none", "", "nan", "missing", "na", "unknown", "undefined", "-", "--", "---", ".", "..", "...", None}
+    
+    def is_missing(value):
+        # Convertire in stringa, rimuovere spazi bianchi e convertire in minuscolo
+        value_str = str(value).strip().lower()
+        
+        # Verificare se il valore è tra quelli mancanti
+        if value_str in missing_values:
+            return True
+        
+        # Verifica se il valore contiene solo spazi, tabulazioni o newline
+        if value_str in {"", "\t", "\n"}:
+            return True
+        
+        # Verifica se il valore contiene solo caratteri non alfanumerici (es. "---")
+        if all(char in "-._" for char in value_str):
+            return True
+        
+        return False
     
     # Calcolo dei campi completati
-    completed_fields = sum(1 for value in details if str(value).strip().lower() not in missing_values)
+    completed_fields = sum(1 for value in details if not is_missing(value))
     
     completeness_percentage = (completed_fields / total_fields) * 100
     return completeness_percentage, total_fields - completed_fields
