@@ -3,14 +3,8 @@ import psycopg2
 import pandas as pd
 import unicodedata
 import plotly.express as px
+from datetime import datetime
 import os
-
-def log_user_access(username):
-    """Registra l'accesso dell'utente in un file di log."""
-    log_file_path = "user_access_log.txt"  # Specifica il percorso del file di log
-    with open(log_file_path, "a") as log_file:
-        log_file.write(f"User: {username}, Logged in at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
 
 def normalize_text(text):
     """Normalizza il testo rimuovendo caratteri non standard e standardizzando il font."""
@@ -33,6 +27,17 @@ def check_credentials(username, password):
         return True
     return False
 
+# Funzione per registrare gli accessi
+def log_user_access(username):
+    """Registra l'accesso dell'utente in un file di log."""
+    try:
+        log_file_path = os.path.join(os.path.dirname(__file__), "user_access_log.txt")
+        with open(log_file_path, "a") as log_file:
+            log_file.write(f"User: {username}, Logged in at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    except Exception as e:
+        st.error(f"Failed to log user access: {e}")
+
+# Funzione di login
 def login():
     """Interfaccia di login."""
     st.title("Login")
@@ -151,21 +156,16 @@ def calculate_completeness(details, labels):
     completeness_percentage = (completed_fields / total_fields) * 100
     return completeness_percentage, total_fields - completed_fields
 
-
-
 # Funzione per creare un grafico a barre della completezza
 def plot_completeness(details, labels):
     completeness = []
     for label, value in zip(labels, details):
-        if value and value != "NULL":
-            completeness.append(1)
-        else:
-            completeness.append(0)
+        completeness.append(100 if not is_missing(value) else 0)
+    
     completeness_df = pd.DataFrame({
         "Field": labels,
         "Completeness": completeness
     })
-    completeness_df["Completeness"] = completeness_df["Completeness"] * 100
     fig = px.bar(completeness_df, x="Field", y="Completeness", title="Completeness of Startup Data")
     st.plotly_chart(fig)
 
