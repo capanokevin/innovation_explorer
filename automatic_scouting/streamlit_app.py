@@ -2,6 +2,7 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 import unicodedata
+import plotly.express as px  # Import Plotly per i grafici
 
 def normalize_text(text):
     """Normalizza il testo rimuovendo caratteri non standard e standardizzando il font."""
@@ -9,7 +10,6 @@ def normalize_text(text):
         normalized_text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
         return normalized_text
     return "N/A"
-
 
 # Definisci le credenziali valide
 VALID_USERS = {
@@ -108,13 +108,17 @@ def format_product_description(description):
         return formatted_description
     return "N/A"
 
-
-
-
 # Funzione per colorare il testo in verde
 def style_label(label):
     """Applica uno stile al nome della colonna."""
     return f'<span style="color:#00FF00">{label}</span>'  # Verde tipo Matrix
+
+# Funzione per calcolare la percentuale di completezza per ogni campo
+def calculate_completeness(df):
+    completeness = df.apply(lambda x: x.notnull() & (x != 'NULL')).mean() * 100
+    completeness_df = completeness.reset_index()
+    completeness_df.columns = ['Field', 'Completeness (%)']
+    return completeness_df
 
 # Interfaccia utente Streamlit
 def main():
@@ -155,6 +159,18 @@ def main():
                 styled_label = style_label(label)
                 st.markdown(f"**{styled_label}:** {value if value else 'N/A'}", unsafe_allow_html=True)
 
+            # Crea un DataFrame per calcolare la completezza
+            df = pd.DataFrame([details], columns=labels)
+            completeness_df = calculate_completeness(df)
+
+            # Visualizza il grafico di completezza
+            st.markdown("### Data Completeness")
+            fig = px.bar(completeness_df, x='Field', y='Completeness (%)', 
+                         title="Completeness of Fields", 
+                         labels={'Completeness (%)': 'Completeness (%)'},
+                         height=400)
+            st.plotly_chart(fig)
+
 # Logica principale
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
@@ -165,4 +181,3 @@ if st.session_state["logged_in"]:
         st.session_state["logged_in"] = False
 else:
     login()
-
