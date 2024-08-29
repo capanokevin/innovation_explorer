@@ -15,7 +15,8 @@ def normalize_text(text):
 VALID_USERS = {
     "max": "simplepass1",  # Password modificata
     "anna": "simplepass2",
-    "admin": "adminpass"
+    "admin": "adminpass",
+    "nowai": "simplepass3"
 }
 
 # Funzione per verificare le credenziali
