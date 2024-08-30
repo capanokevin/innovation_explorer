@@ -226,6 +226,9 @@ def start_thread():
 
     uid = input_json['userId']
 
+    if not uid:
+        return None
+
     threadId = find_or_create_user_thread(uid, "ADVISOR")
 
     # TODO save on database userID/stage1
@@ -312,4 +315,5 @@ def user_manual():
     }
 
 
-
+def create_app():
+    return app
